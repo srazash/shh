@@ -24,13 +24,11 @@ create table secret (
 
 create table secret_type (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    type        VARCHAR(255) NOT NULL,
-    key_name    VARCHAR(255) NOT NULL,
-    value_name  VARCHAR(255) NOT NULL
+    type        VARCHAR(255) NOT NULL
 );
 
-insert into secret_type (type, key_name, value_name)
-values ('credential', 'Username', 'Password'), ('api_key', 'Key', 'Value');
+insert into secret_type (type)
+values ('credential'), ('api_key');
 
 create table secret_history (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
