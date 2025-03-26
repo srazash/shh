@@ -1,39 +1,63 @@
 -- application config
-create table config (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    key         VARCHAR(255) NOT NULL UNIQUE,
-    value       TEXT NOT NULL
+CREATE TABLE config (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    key             VARCHAR(255) NOT NULL UNIQUE,
+    value           TEXT NOT NULL
 );
 
 -- authentication
-create table users (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    username    VARCHAR(100) NOT NULL UNIQUE,
-    password    VARCHAR(255) NOT NULL,
-    active      BOOLEAN DEFAULT TRUE
+CREATE TABLE user (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    username        VARCHAR(100) NOT NULL UNIQUE,
+    password        VARCHAR(255) NOT NULL,
+    active          BOOLEAN DEFAULT TRUE,
+    created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- secret management
-create table secret (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    key         VARCHAR(255) NOT NULL UNIQUE,
-    value       TEXT NOT NULL,
-    description TEXT,
-    timestamp   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE secret_type (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    type            VARCHAR(255) NOT NULL
 );
 
-create table secret_type (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    type        VARCHAR(255) NOT NULL
+INSERT INTO secret_type (type)
+VALUES
+    ('credential'),
+    ('api_key');
+
+CREATE TABLE secret (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    key             VARCHAR(255) NOT NULL UNIQUE,
+    value           TEXT NOT NULL,
+    type_id         INTEGER NOT NULL,
+    description     TEXT,
+    active          BOOLEAN DEFAULT TRUE,
+    user_id         INTEGER NOT NULL,
+    created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (type_id) REFERENCES type(id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
-insert into secret_type (type)
-values ('credential'), ('api_key');
+-- tags
+CREATE TABLE secret_tag (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT, 
+    secret_id       INTEGER NOT NULL,
+    tag             VARCHAR(100),
+    created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (secret_id) REFERENCES secret(id)
+);
 
-create table secret_history (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    secret_id   INTEGER NOT NULL,
-    key         VARCHAR(255) NOT NULL UNIQUE,
-    value       TEXT NOT NULL,
-    timestamp   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- distinct tags
+CREATE VIEW tags AS
+SELECT DISTINCT tag
+FROM secret_tag;
+
+-- secret history
+CREATE TABLE secret_history (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    secret_id       INTEGER  NOT NULL,
+    key             VARCHAR(255) NOT NULL UNIQUE,
+    value           TEXT NOT NULL,
+    created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (secret_id) REFERENCES secret(id)
 );
