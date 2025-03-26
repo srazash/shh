@@ -39,18 +39,20 @@ CREATE TABLE secret (
 );
 
 -- tags
-CREATE TABLE secret_tag (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT, 
-    secret_id       INTEGER NOT NULL,
-    tag             VARCHAR(100),
-    created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (secret_id) REFERENCES secret(id)
+CREATE TABLE tag (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    tag             VARCHAR(100) NOT NULL UNIQUE,
+    created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- distinct tags
-CREATE VIEW tags AS
-SELECT DISTINCT tag
-FROM secret_tag;
+CREATE TABLE secret_tag (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    secret_id       INTEGER NOT NULL,
+    tag_id          INTEGER NOT NULL,
+    created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (secret_id) REFERENCES secret(id),
+    FOREIGN KEY (tag_id) REFERENCES tag(id)
+);
 
 -- secret history
 CREATE TABLE secret_history (
