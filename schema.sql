@@ -55,8 +55,8 @@ FROM secret_tag;
 -- secret history
 CREATE TABLE secret_history (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    secret_id       INTEGER  NOT NULL,
-    key             VARCHAR(255) NOT NULL UNIQUE,
+    secret_id       INTEGER NOT NULL,
+    key             VARCHAR(255) NOT NULL,
     value           TEXT NOT NULL,
     created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (secret_id) REFERENCES secret(id)
