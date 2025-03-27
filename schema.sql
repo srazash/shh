@@ -63,3 +63,12 @@ CREATE TABLE secret_history (
     created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (secret_id) REFERENCES secret(id)
 );
+
+-- env keys
+CREATE TABLE env_key (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    secret_id       INTEGER NOT NULL,
+    env_key         VARCHAR(255) NOT NULL,
+    created         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (secret_id) REFERENCES secret(id)
+)
